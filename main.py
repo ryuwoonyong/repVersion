@@ -36,10 +36,12 @@ def upLoadJs():
 
 def tomcatStart():
     result = subprocess.run(["python", Startpy], capture_output=True, text=True, encoding='utf-8')
+    wasAlive()
     return result.stdout.strip()
 
 def tomcatShutdown():
     result = subprocess.run(["python", Shutdownpy], capture_output=True, text=True, encoding='utf-8')
+    wasAlive()
     return result.stdout.strip()
 
 button = tk.Button(root, text="업로드", width=10, anchor="center", font=("Helvetica", 12), foreground="black", background="lightgray", borderwidth=2, relief="solid", command=upLoadJs)
@@ -64,7 +66,7 @@ def wasAlive():
 def wmAlive():
     result = run_script_and_get_result(vmAlivepy)
     # 라벨 업데이트
-    messagebox.showinfo("VM 상태", result + "\r\n서버 담당자에게 문의하세요 김진현")
+    messagebox.showinfo("VM 상태", result)
 
 # 서버 ALIVE 체크
 wmAlive()
