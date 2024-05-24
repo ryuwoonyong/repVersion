@@ -59,15 +59,18 @@ finally:
     # SSH 연결 종료
     ssh.close()
 
-def tomcatStart():
-    result = subprocess.run(["python", Startpy], capture_output=True, text=True, encoding='utf-8')
-    #wasAlive()
-    return result.stdout.strip()
+    def tomcatStart():
+        result = subprocess.run(["python", Startpy], capture_output=True, text=True, encoding='utf-8')
+        #wasAlive()
+        #print()
+        #return result.stdout.strip()
+    
 
-def tomcatShutdown():
-    result = subprocess.run(["python", Shutdownpy], capture_output=True, text=True, encoding='utf-8')
-    #wasAlive()
-    return result.stdout.strip()
+    def tomcatShutdown():
+        result = subprocess.run(["python", Shutdownpy], capture_output=True, text=True, encoding='utf-8')
+        #wasAlive()
+        return result.stdout.strip()
+
 
 
 def resource_path(relative_path):
@@ -98,13 +101,21 @@ class WindowClass(QMainWindow, form_class):
         for ver in sel_en_verint:
             self.comboBox.addItem(str(ver))
 
-        self.server_start.clicked.connect(tomcatStart)
         
+        #self.server_start.clicked.connect(self.tomcatStart)
+        self.server_start.clicked.connect(self.on_button_click)
+        self.server_shutdown.clicked.connect(self.on_button_click1)
         #def on_button_click(self):
         # 버튼 클릭 시 실행될 코드
         
         #self.start
     #여기에 함수 설정
+    def on_button_click(self):
+        tomcatStart()
+    def on_button_click1(self):
+        tomcatShutdown()
+()
+
 
 
 if __name__ == '__main__':
