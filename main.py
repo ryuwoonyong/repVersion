@@ -16,6 +16,7 @@ urlAlivepy = "./util/urlAlive.py"
 vmAlivepy = "./util/vmAlive.py"  # 여기서 경로 수정
 Startpy = "./util/start.py"
 Shutdownpy = "./util/shutdown.py"
+fileSelect ="./util/fileSelect.py"
 
 # SSH 클라이언트 객체 생성
 ssh = paramiko.SSHClient()
@@ -59,19 +60,32 @@ finally:
     # SSH 연결 종료
     ssh.close()
 
-    def tomcatStart():
+def fileSearch(self):
+    result = run_script_and_get_result(fileSelect)
+    print(result)
+    self.textEdit.setText(result)
+
+def run_script_and_get_result(script_path):
+    result = subprocess.run(["python", script_path], capture_output=True, text=True, encoding='utf-8')
+    return result.stdout.strip()
+
+def wasAlive():
+    # 다른 스크립트 실행 후 반환된 결과
+    result = run_script_and_get_result(urlAlivepy)    
+    
+def wmAlive():
+    result = run_script_and_get_result(vmAlivepy)
+
+def tomcatStart():
         result = subprocess.run(["python", Startpy], capture_output=True, text=True, encoding='utf-8')
         #wasAlive()
         #print()
-        #return result.stdout.strip()
-    
+        return result.stdout.strip()
 
-    def tomcatShutdown():
+def tomcatShutdown():
         result = subprocess.run(["python", Shutdownpy], capture_output=True, text=True, encoding='utf-8')
         #wasAlive()
         return result.stdout.strip()
-
-
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))    
@@ -101,6 +115,8 @@ class WindowClass(QMainWindow, form_class):
         for ver in sel_en_verint:
             self.comboBox.addItem(str(ver))
 
+       
+        self.pushButton.clicked.connect(self.search1)
         
         #self.server_start.clicked.connect(self.tomcatStart)
         self.server_start.clicked.connect(self.on_button_click)
@@ -112,11 +128,12 @@ class WindowClass(QMainWindow, form_class):
     #여기에 함수 설정
     def on_button_click(self):
         tomcatStart()
+
     def on_button_click1(self):
         tomcatShutdown()
-()
 
-
+    def search1(self):
+        fileSearch(self)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

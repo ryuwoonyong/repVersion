@@ -29,7 +29,7 @@ if __name__ == "__main__":
     password = "tomcat"
     
     if check_vm_connection(hostname, port, username, password):
-        print("Connection successful")
+        print("0")
     else:
-        print("Connection failed")
+        print("1")
     

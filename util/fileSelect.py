@@ -10,6 +10,6 @@ def get_file_path():
 if __name__ == '__main__':
     file_path = get_file_path()
     if file_path:
-        print({file_path})
+        print(file_path)
     else:
         print("No file selected")
