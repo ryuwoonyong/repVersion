@@ -1,12 +1,14 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
-import subprocess
+import os
+import sys
 import paramiko
 
-root = tk.Tk()
-root.title("리포트 버전 테스트")
-root.geometry("800x400")
+from PyQt5.QtWidgets import *
+from PyQt5 import uic
+# 더 추가할 필요가 있다면 추가하시면 됩니다. 예: (from PyQt5.QtGui import QIcon)
+
+rep_en_ver=""
+rep_js_ver=""
+sel_en_ver=[]
 
 # 실행 파이선 파일
 urlAlivepy = "./util/urlAlive.py"
@@ -14,63 +16,82 @@ vmAlivepy = "./util/vmAlive.py"  # 여기서 경로 수정
 Startpy = "./util/start.py"
 Shutdownpy = "./util/shutdown.py"
 
-# 타이틀 라벨
-labelTitle = ttk.Label(root, text="Report Version Test", font=("Helvetica", 25, "bold italic"))
-labelTitle.pack(pady=20)
+# SSH 클라이언트 객체 생성
+ssh = paramiko.SSHClient()
 
-# 라벨들을 각각 pack과 grid로 배치
-labelAliveCheckTitle = ttk.Label(root, text="SERVER CONDITION", width=20, anchor="center", font=("Helvetica", 12), foreground="black", background="lightgray", borderwidth=2, relief="solid", padding=(10, 5))
-labelAliveCheckTitle.pack(side=tk.LEFT, padx=5, pady=20)
+# 자동으로 서버의 호스트 키를 추가
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-labelAliveCheck = ttk.Label(root, text="", width=20, anchor="center", font=("Helvetica", 12), foreground="black", background="lightgray", borderwidth=2, relief="solid", padding=(10, 5))
-labelAliveCheck.pack(side=tk.LEFT, padx=5, pady=20)
+# SSH 연결 설정
+hostname = "10.0.2.21"
+port = 22
+username = "tomcat"
+password = "tomcat"
+try:
+    ssh.connect(hostname, port, username, password)
 
-def upLoadJs():
-    try:
-        # 'other_script.py'를 실행
-        result = subprocess.run(["python", "./test/shape.py"], capture_output=True, text=True, check=True, encoding='utf-8')
-        # 레이블의 텍스트를 실행 결과로 변경
-        messagebox.showinfo("정보", "다른 스크립트가 성공적으로 실행되었습니다!")
-    except subprocess.CalledProcessError as e:
-        messagebox.showerror("오류", f"스크립트 실행 중 오류 발생: {e}")
+    # 원격 명령 실행
+    stdin, stdout, stderr = ssh.exec_command("/app/tomcat/files/libcp.sh 260")
+    
+    # 명령의 출력 결과 읽기
+    print("STDOUT111:")
+    for line in stdout.readlines():
+        print(line.strip())
 
-def tomcatStart():
-    result = subprocess.run(["python", Startpy], capture_output=True, text=True, encoding='utf-8')
-    wasAlive()
-    return result.stdout.strip()
+    print("STDERR111:")
+    for line in stderr.readlines():
+        print(line.strip())
 
-def tomcatShutdown():
-    result = subprocess.run(["python", Shutdownpy], capture_output=True, text=True, encoding='utf-8')
-    wasAlive()
-    return result.stdout.strip()
+    # 원격 명령 실행
+    stdin, stdout, stderr = ssh.exec_command("cat /app/tomcat/files/lib_version.txt")
+    
+    # 명령의 출력 결과 읽기
+    print("STDOUT222:")
+    for line in stdout.readlines():
+        print(line.strip())
+        rep_en_ver+=line.strip()
 
-button = tk.Button(root, text="업로드", width=10, anchor="center", font=("Helvetica", 12), foreground="black", background="lightgray", borderwidth=2, relief="solid", command=upLoadJs)
-button.pack(side=tk.LEFT, padx=5, pady=20)
+    print("STDERR222:")
+    for line in stderr.readlines():
+        print(line.strip())
+finally:
+    # SSH 연결 종료
+    ssh.close()
 
-button = tk.Button(root, text="WAS START", command=tomcatStart)
-button.pack(pady=10)
+def resource_path(relative_path):
+    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))    
+    return os.path.join(base_path, relative_path)
 
-button = tk.Button(root, text="WAS SHUTDOWN", command=tomcatShutdown)
-button.pack(pady=10)
+form = resource_path('./templates/app.ui')
+form_class = uic.loadUiType(form)[0]
 
-def run_script_and_get_result(script_path):
-    result = subprocess.run(["python", script_path], capture_output=True, text=True, encoding='utf-8')
-    return result.stdout.strip()
+class WindowClass(QMainWindow, form_class):
+    def __init__(self):
+        super( ).__init__( )
+        self.setupUi(self)
+        self.setWindowTitle("톰캣/리포트 확인")
+        self.label_4.setText("현재버전 - 5.0." + rep_en_ver)
+        # 여기에 시그널, 설정 
+        
+        ssh.connect(hostname, port, username, password)
+        # 원격 명령 실행
+        stdin, stdout, stderr = ssh.exec_command("ls -r /app/tomcat/files/lib/")
+        # 명령의 출력 결과 읽기
+        print("STDOUT333:")
+        for line in stdout.readlines():
+            print(line.strip())
+            #print(line)
+            self.comboBox.addItem(line.strip());
+            #sel_en_ver[line]=line.strip()
+        print("STDERR333:")
+        for line in stderr.readlines():
+            print(line.strip())
+        self.comboBox.setCurrentText(rep_en_ver);
+    #여기에 함수 설정
+    
 
-def wasAlive():
-    # 다른 스크립트 실행 후 반환된 결과
-    result = run_script_and_get_result(urlAlivepy)    
-    # 라벨 업데이트
-    labelAliveCheck.config(text=result)
-
-def wmAlive():
-    result = run_script_and_get_result(vmAlivepy)
-    # 라벨 업데이트
-    messagebox.showinfo("VM 상태", result)
-
-# 서버 ALIVE 체크
-wmAlive()
-# WAS ALIVE 체크
-wasAlive()
-
-root.mainloop()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    myWindow = WindowClass( )
+    myWindow.show( )
+    app.exec_( )
