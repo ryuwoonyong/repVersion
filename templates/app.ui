@@ -420,7 +420,7 @@
      </property>
     </item>
    </widget>
-   <widget class="QTextEdit" name="textEdit_5">
+   <widget class="QTextEdit" name="textEditLogger">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -430,7 +430,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_8">
+   <widget class="QPushButton" name="verSet">
     <property name="geometry">
      <rect>
       <x>580</x>

@@ -2,14 +2,19 @@ import os
 import sys
 import paramiko
 import subprocess
+import logging
+
+from util import ReportCommon
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-# 더 추가할 필요가 있다면 추가하시면 됩니다. 예: (from PyQt5.QtGui import QIcon)
 
-rep_en_ver=""
-rep_js_ver=""
-sel_en_ver=[]
+# SSH 연결 설정
+hostname = "10.0.2.21"
+port = 22
+username = "tomcat"
+password = "tomcat"
+reportPath = "/app/tomcat/ClipReport5"
 
 # 실행 파이선 파일
 urlAlivepy = "./util/urlAlive.py"
@@ -18,47 +23,6 @@ Startpy = "./util/start.py"
 Shutdownpy = "./util/shutdown.py"
 fileSelect ="./util/fileSelect.py"
 
-# SSH 클라이언트 객체 생성
-ssh = paramiko.SSHClient()
-
-# 자동으로 서버의 호스트 키를 추가
-ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-# SSH 연결 설정
-hostname = "10.0.2.21"
-port = 22
-username = "tomcat"
-password = "tomcat"
-try:
-    ssh.connect(hostname, port, username, password)
-
-    # 원격 명령 실행
-    stdin, stdout, stderr = ssh.exec_command("/app/tomcat/files/libcp.sh 260")
-    
-    # 명령의 출력 결과 읽기
-    print("STDOUT111:")
-    for line in stdout.readlines():
-        print(line.strip())
-
-    print("STDERR111:")
-    for line in stderr.readlines():
-        print(line.strip())
-
-    # 원격 명령 실행
-    stdin, stdout, stderr = ssh.exec_command("cat /app/tomcat/files/lib_version.txt")
-    
-    # 명령의 출력 결과 읽기
-    print("STDOUT222:")
-    for line in stdout.readlines():
-        print(line.strip())
-        rep_en_ver+=line.strip()
-
-    print("STDERR222:")
-    for line in stderr.readlines():
-        print(line.strip())
-finally:
-    # SSH 연결 종료
-    ssh.close()
 
 def fileSearch(self):
     result = run_script_and_get_result(fileSelect)
@@ -78,8 +42,6 @@ def wmAlive():
 
 def tomcatStart():
         result = subprocess.run(["python", Startpy], capture_output=True, text=True, encoding='utf-8')
-        #wasAlive()
-        #print()
         return result.stdout.strip()
 
 def tomcatShutdown():
@@ -98,33 +60,42 @@ class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
+        
+        '''''''''''''''''UI 초기세팅'''''''''''''''''
+        
         self.setWindowTitle("톰캣/리포트 확인")
-        self.label_4.setText("현재버전 - 5.0." + rep_en_ver)
-        # 여기에 시그널, 설정 
+        self.setFixedWidth(680)
+        # 리포트 버전 확인
+        self.label_4.setText("현재버전 - "+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
         
-        ssh.connect(hostname, port, username, password)
-        # 원격 명령 실행
-        stdin, stdout, stderr = ssh.exec_command("ls -r /app/tomcat/files/lib/")
-        # 명령의 출력 결과 읽기
-        for line in stdout.readlines():
-            sel_en_ver.append(line.replace("\n",""))
-        for line in stderr.readlines():
-            print(line.strip())
-        sel_en_verint = [int (i) for i in sel_en_ver]
-        sel_en_verint.sort(reverse=True)
-        for ver in sel_en_verint:
-            self.comboBox.addItem(str(ver))
+        # 라이브러리 콤보박스 세팅
+        ReportCommon.libComSet(self, hostname, port, username, password)
+        
+        # 서버 status
+        
+        # 톰캣 status
+        
+        # 톰캣 로그
+        
 
-       
-        self.pushButton.clicked.connect(self.search1)
+        '''''''''''''''''UI 초기세팅'''''''''''''''''
         
-        #self.server_start.clicked.connect(self.tomcatStart)
+        
+        
+        #self.pushButton.clicked.connect(self.search1)
+        
+        # 톰캣 start
         self.server_start.clicked.connect(self.on_button_click)
-        self.server_shutdown.clicked.connect(self.on_button_click1)
-        #def on_button_click(self):
-        # 버튼 클릭 시 실행될 코드
         
-        #self.start
+        # 톰캣 shutdown
+        self.server_shutdown.clicked.connect(self.on_button_click1)
+        
+        # 버전 변경
+        self.verSet.clicked.connect(self.verSet1)
+        
+        
+        
+
     #여기에 함수 설정
     def on_button_click(self):
         tomcatStart()
@@ -134,9 +105,15 @@ class WindowClass(QMainWindow, form_class):
 
     def search1(self):
         fileSearch(self)
+        
+    def verSet1(self):
+        print(self.comboBox.currentText())
+        ReportCommon.versionChange(hostname, port, username, password, self.comboBox.currentText())
 
+        
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     myWindow = WindowClass( )
     myWindow.show( )
     app.exec_( )
+
