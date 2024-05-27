@@ -14,9 +14,9 @@ def versionCheck(hostname, port, username, password, reportPath):
         ssh.connect(hostname, port, username, password)
 
         # 원격 명령 실행
-        #stdin, stdout, stderr = ssh.exec_command("cat /app/tomcat/files/lib_version.txt")
-        print(">>>>>>   " + reportPath);
-        stdin, stdout, stderr = ssh.exec_command("unzip -p "+reportPath+"/WEB-INF/lib/ClipReport5.0-Common.jar Version.txt")
+        stdin, stdout, stderr = ssh.exec_command("cat /app/tomcat/files/lib_version.txt")
+        #print(">>>>>>   " + reportPath);
+        #stdin, stdout, stderr = ssh.exec_command("unzip -p "+reportPath+"/WEB-INF/lib/ClipReport5.0-Common.jar Version.txt")
         
         # 명령의 출력 결과 읽기
         for line in stdout.readlines():
@@ -25,7 +25,8 @@ def versionCheck(hostname, port, username, password, reportPath):
     finally:
         # SSH 연결 종료
         ssh.close()
-    return rep_en_ver.split("=")[1]
+    #return rep_en_ver.split("=")[1]
+    return rep_en_ver
 
 def libComSet(self, hostname, port, username, password):
     try:
