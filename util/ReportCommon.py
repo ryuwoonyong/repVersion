@@ -1,5 +1,7 @@
 # SSH 클라이언트 객체 생성
-import paramiko
+import paramiko, time, webbrowser
+
+
 
 ssh = paramiko.SSHClient()
 
@@ -56,3 +58,15 @@ def versionChange(hostname, port, username, password, ver):
     finally:
         # SSH 연결 종료
         ssh.close()
+
+def reportView(self):
+    print("여기로와야지")
+    self.tomStat.setText('되냐')
+    # 기본 웹 브라우저를 사용하여 URL 열기(임시)
+    webbrowser.open('http://10.0.2.21:8080/ClipReport5/report.jsp')
+
+    # 특정 웹 브라우저 (크롬) 사용하여 URL 열기
+    #webbrowser.get('chrome').open('http://10.0.2.21/ClipReport5/report.jsp')
+
+    # 특정 웹 브라우저 (엣지) 사용하여 URL 열기
+    #webbrowser.get('edge').open('http://10.0.2.21/ClipReport5/report.jsp')

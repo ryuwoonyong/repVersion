@@ -101,6 +101,9 @@ class WindowClass(QMainWindow, form_class):
         # 버전 변경
         self.verSet.clicked.connect(self.verSet1)
         
+        # 뷰어 실행
+        self.ViewRun.clicked.connect(self.view)
+        
         
         
 
@@ -131,6 +134,7 @@ class WindowClass(QMainWindow, form_class):
     def tomDown(self):
         self.server_start.setEnabled(True)
         self.server_shutdown.setEnabled(False)
+        self.verSet.setEnabled(False)
         self.tomStat.setText('<p align="left"><span style=" font-size:12pt; color:black;">stop </span><span style=" font-size:12pt; color:red;">●</span></p>')
     def tomIng(self, str):
         self.tomStat.setText('<p align="left"><span style=" font-size:12pt; color:black;">'+str+'</span></p>')
@@ -141,7 +145,8 @@ class WindowClass(QMainWindow, form_class):
         #        time.sleep(0.2)
         #        self.tomStat.setText('<p align="left"><span style=" font-size:12pt; color:black;">'+i+'</span></p>')
         
-
+    def view(self):
+        ReportCommon.reportView(self)
 
 
 

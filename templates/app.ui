@@ -244,7 +244,7 @@
      <string>현재 뷰어 버전 - </string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="ViewRun">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -451,7 +451,7 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="text">
-     <string>&lt;p align=&quot;left&quot;&gt;&lt;span style=&quot; font-size:12pt; color:#black;&quot;&gt;started &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:green;&quot;&gt;●&lt;/span&gt;&lt;/p&gt;</string>
+     <string>&lt;p align=&quot;left&quot;&gt;&lt;span style=&quot; font-size:12pt; color:black;&quot;&gt;started &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:green;&quot;&gt;●&lt;/span&gt;&lt;/p&gt;</string>
     </property>
    </widget>
   </widget>
