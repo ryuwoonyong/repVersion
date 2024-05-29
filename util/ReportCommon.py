@@ -98,7 +98,9 @@ def versionChange(hostname, port, username, password, ver):
 def reportView(self):
     crfNm = self.crfCombo.currentText()
     jsVer = self.jsCombo.currentText()
-    param="?crfNm="+crfNm+"&jsVer="+jsVer
+    dataVal = self.dataVal.toPlainText()
+    dataType = self.dataType.currentText()
+    param="?crfNm="+crfNm+"&jsVer="+jsVer+"&dataVal="+dataVal+"&dataType="+dataType
     # 기본 웹 브라우저를 사용하여 URL 열기(임시)
     webbrowser.open('http://10.0.2.21:8080/ClipReport5/report_repv.jsp'+param)
 

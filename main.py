@@ -17,8 +17,7 @@ password = "tomcat"
 reportPath = "/app/tomcat/ClipReport5"
 log_file_path="/app/tomcat/tomcat/logs/catalina.out"
 verFilePath="/app/tomcat/files"
-
-ver = 1
+remote_file_path="/app/tomcat/files/lib/"
 
 #하기 함수로 vm및 was 커넥션 체크
 #AliveCheck.check_vm_connection(hostname, port, username, password)
@@ -41,7 +40,7 @@ class WindowClass(QMainWindow, form_class):
         '''''''''''''''''UI 초기세팅'''''''''''''''''
         
         self.setWindowTitle("Report Version TEST")
-        self.setFixedWidth(680)
+        self.setFixedWidth(691)
         
         # VM 서버 확인
         
@@ -63,7 +62,6 @@ class WindowClass(QMainWindow, form_class):
         # crf 콤보박스 세팅
         ReportCommon.crfComSet(self, hostname, port, username, password)  
         
-        
         # 톰캣 로그
         self.textEditLogger.setReadOnly(True)
         self.setup_log_reader(hostname, port, username, password, log_file_path)
@@ -73,9 +71,8 @@ class WindowClass(QMainWindow, form_class):
         
         
         #jar 업로드 
-        self.pushButton_5.clicked.connect(self.fileSearch)
-
-        self.pushButton_9.clicked.connect(self.upload_file_to_server)
+        self.libSearch.clicked.connect(self.fileSearch)
+        self.libUpload.clicked.connect(self.upload_file_to_server)
         
         # 톰캣 start
         self.server_start.clicked.connect(self.on_button_click)
@@ -84,7 +81,7 @@ class WindowClass(QMainWindow, form_class):
         self.server_shutdown.clicked.connect(self.on_button_click1)
         
         # 버전 변경
-        self.verSet.clicked.connect(self.verSet1)
+        self.verSet.clicked.connect(self.verComSet)
         
         # 뷰어 실행
         self.ViewRun.clicked.connect(self.view)
@@ -95,19 +92,14 @@ class WindowClass(QMainWindow, form_class):
     #여기에 함수 설정
     def fileSearch(self):
         result = ReportCommon.get_file_path()
-        print(result)
         self.textEdit.setText(result)
 
     def upload_file_to_server(self):
         local_file_path = self.textEdit.toPlainText()
         ver = ReportCommon.extract_last_four_to_seven_chars(local_file_path)
-        remote_file_path="/app/tomcat/files/lib/"
-
         ReportCommon.upload_file_to_server(hostname, port, username, password, local_file_path, remote_file_path, ver)
-        
 
     def on_button_click(self):
-        self.tomIng('starting...')
         ServerCommon.tomcatAct.tomcatAct(hostname, port, username, password,"start")
         self.log_reader_thread = ServerCommon.LogReaderThread()
         self.log_reader_thread.setup(hostname, port, username, password, log_file_path)
@@ -115,7 +107,6 @@ class WindowClass(QMainWindow, form_class):
         self.log_reader_thread.start()
 
     def on_button_click1(self):
-        self.tomIng('stopping...')
         ServerCommon.tomcatAct.tomcatAct(hostname, port, username, password,"shutdown")
         self.log_reader_thread = ServerCommon.LogReaderThread()
         self.log_reader_thread.setup(hostname, port, username, password, log_file_path)
@@ -134,26 +125,20 @@ class WindowClass(QMainWindow, form_class):
         self.tomStat.setText('<p align="left"><span style=" font-size:12pt; color:black;">stop </span><span style=" font-size:12pt; color:red;">●</span></p>')
     def tomIng(self, str):
         self.tomStat.setText('<p align="left"><span style=" font-size:12pt; color:black;">'+str+'</span></p>')
-        #pers = ['-', '\\', '|',  '/']
-        #for z in range(20):
-        #    for i in pers :
-        #        print(i, end='\r', flush=True)
-        #        time.sleep(0.2)
-        #        self.tomStat.setText('<p align="left"><span style=" font-size:12pt; color:black;">'+i+'</span></p>')
         
     def view(self):
         ReportCommon.reportView(self)
-
-    def search1(self):
-        fileSearch(self)
         
-    def verSet1(self):
-        self.setEnabled(False)
-        ReportCommon.versionChange(hostname, port, username, password, self.libCombo.currentText())
-        self.log_reader_thread = ServerCommon.LogReaderThread()
-        self.log_reader_thread.setup(hostname, port, username, password, log_file_path)
-        self.log_reader_thread.success_signal.connect(self.enable_ui)
-        self.log_reader_thread.start()        
+    def verComSet(self):
+        if ReportCommon.versionCheck(hostname, port, username, password, reportPath) != self.libCombo.currentText():
+            self.setEnabled(False)
+            ReportCommon.versionChange(hostname, port, username, password, self.libCombo.currentText())
+            self.log_reader_thread = ServerCommon.LogReaderThread()
+            self.log_reader_thread.setup(hostname, port, username, password, log_file_path)
+            self.log_reader_thread.success_signal.connect(self.enable_ui)
+            self.log_reader_thread.start()
+        else:
+             QMessageBox.about(self,'현재버전과 같음')
         
     def enable_ui(self):
         self.setEnabled(True)

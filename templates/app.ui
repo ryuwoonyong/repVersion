@@ -276,7 +276,7 @@
      <string>CRF파일</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_5">
+   <widget class="QPushButton" name="libSearch">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -289,7 +289,7 @@
      <string>찾기</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_6">
+   <widget class="QPushButton" name="jsSearch">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -302,7 +302,7 @@
      <string>찾기</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_7">
+   <widget class="QPushButton" name="crfSearch">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -325,7 +325,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit_4">
+   <widget class="QTextEdit" name="dataVal">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -361,7 +361,7 @@
      <string>데이터 타입</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox_3">
+   <widget class="QComboBox" name="dataType">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -447,7 +447,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;p align=&quot;left&quot;&gt;&lt;span style=&quot; font-size:12pt; color:black;&quot;&gt;started &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:green;&quot;&gt;●&lt;/span&gt;&lt;/p&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_9">
+   <widget class="QPushButton" name="libUpload">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -460,7 +460,7 @@ p, li { white-space: pre-wrap; }
      <string>업로드</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_10">
+   <widget class="QPushButton" name="jsUpload">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -473,7 +473,7 @@ p, li { white-space: pre-wrap; }
      <string>업로드</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_11">
+   <widget class="QPushButton" name="crfUpload">
     <property name="geometry">
      <rect>
       <x>610</x>
@@ -496,28 +496,6 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>680</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>?????</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>?????</string>
-    </property>
-   </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
