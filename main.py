@@ -18,6 +18,8 @@ reportPath = "/app/tomcat/ClipReport5"
 log_file_path="/app/tomcat/tomcat/logs/catalina.out"
 verFilePath="/app/tomcat/files"
 
+ver = 1
+
 #하기 함수로 vm및 was 커넥션 체크
 #AliveCheck.check_vm_connection(hostname, port, username, password)
 #AliveCheck.check_tom_connection(URL)
@@ -70,6 +72,8 @@ class WindowClass(QMainWindow, form_class):
         
         #jar 업로드 
         self.pushButton_5.clicked.connect(self.fileSearch)
+
+        self.pushButton_9.clicked.connect(self.upload_file_to_server)
         
         # 톰캣 start
         self.server_start.clicked.connect(self.on_button_click)
@@ -91,6 +95,14 @@ class WindowClass(QMainWindow, form_class):
         result = ReportCommon.get_file_path()
         print(result)
         self.textEdit.setText(result)
+
+    def upload_file_to_server(self):
+        local_file_path = self.textEdit.toPlainText()
+        ver = ReportCommon.extract_last_four_to_seven_chars(local_file_path)
+        remote_file_path="/app/tomcat/files/lib/"
+
+        ReportCommon.upload_file_to_server(hostname, port, username, password, local_file_path, remote_file_path, ver)
+        
 
     def on_button_click(self):
         self.tomIng('starting...')
@@ -129,9 +141,6 @@ class WindowClass(QMainWindow, form_class):
         
     def view(self):
         ReportCommon.reportView(self)
-
-
-
 
     def search1(self):
         fileSearch(self)

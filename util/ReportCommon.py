@@ -1,6 +1,8 @@
 # SSH 클라이언트 객체 생성
 import paramiko, time, webbrowser
 import tkinter as tk
+import re
+import os
 # 파일 다이얼로그
 from tkinter import filedialog
 
@@ -111,3 +113,70 @@ def get_file_path():
     root.withdraw()  # Hide the main window
     file_path = filedialog.askopenfilename()
     return file_path
+
+def upload_file_to_server(hostname, port, username, password, local_file_path, remote_file_path, ver):
+    # SSH 클라이언트 초기화
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    
+    try:
+        # SSH 연결 시도
+        ssh.connect(hostname, port=port, username=username, password=password)
+        
+        # SFTP 클라이언트 초기화
+        sftp = ssh.open_sftp()
+
+        if remote_file_path is None:
+            temporary_directory = '/tmp/'  # 임시 디렉토리 경로
+            remote_file_path = os.path.join(temporary_directory, os.path.basename(local_file_path))
+        elif ver is not None:
+            # remote_file_path에 ver 추가
+            remote_file_path = remote_file_path + ver + "/ClipReport5.0." + ver + ".jar"
+        else:
+            raise ValueError("If 'remote_file_path' is provided, 'ver' must also be provided.")
+        
+        # 원격 디렉토리 경로 생성
+        remote_dir = os.path.dirname(remote_file_path)
+        
+        # 원격 디렉토리가 존재하지 않으면 생성
+        try:
+            sftp.stat(remote_dir)
+        except FileNotFoundError:
+            make_remote_dir(sftp, remote_dir)
+        
+        # 파일 업로드
+        sftp.put(local_file_path, remote_file_path)
+        print(f"File {local_file_path} uploaded to {remote_file_path} on {hostname}")
+        
+        # SFTP 클라이언트 종료
+        sftp.close()
+    
+    except paramiko.AuthenticationException:
+        print("Authentication failed, please verify your credentials")
+    except paramiko.SSHException as sshException:
+        print(f"Could not establish SSH connection: {sshException}")
+    except Exception as e:
+        print(f"Exception in connecting to the server or uploading file: {e}")
+    finally:
+        # SSH 연결 종료
+        ssh.close()
+        print("SSH connection closed")
+
+def make_remote_dir(sftp, remote_directory):
+    """재귀적으로 디렉토리를 생성하는 함수"""
+    dirs = remote_directory.split('/')
+    path = ''
+    for directory in dirs:
+        if directory:
+            path = f"{path}/{directory}"
+            try:
+                sftp.stat(path)
+            except FileNotFoundError:
+                sftp.mkdir(path)
+
+def extract_last_four_to_seven_chars(file_path):
+    # 파일명 추출
+    file_name = os.path.basename(file_path)
+    # 파일명에서 마지막 4~7자리 추출
+    last_four_to_seven_chars = file_name[-7:-4]
+    return last_four_to_seven_chars
