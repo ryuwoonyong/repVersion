@@ -1,5 +1,7 @@
 import paramiko
+import requests
 from PyQt5.QtCore import QThread, pyqtSignal
+from requests.exceptions import ConnectionError, HTTPError
 
 class LogReaderThread(QThread):
     new_log_signal = pyqtSignal(str)
@@ -44,3 +46,43 @@ class LogReaderThread(QThread):
         self.running = False
         self.quit()
         self.wait()
+
+class tomcatAct:
+    def tomcatAct(hostname, port, username, password, act):
+    # SSH 클라이언트 초기화
+        ssh = paramiko.SSHClient()
+    # 호스트 키 자동 추가 정책 설정
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    
+        try:
+            # SSH 연결 시도
+            ssh.connect(hostname, port, username, password)
+        
+            # 원격 명령 실행 act 여부에 따라 start 또는 shutdown
+            command =""
+            if act == "start" :
+                command = "export JRE_HOME=/usr/lib/java/openjdk-8u342-b07; /app/tomcat/tomcat/bin/startup.sh"
+            if act == "shutdown" :
+                command = "export JRE_HOME=/usr/lib/java/openjdk-8u342-b07; /app/tomcat/tomcat/bin/shutdown.sh"
+
+            stdin, stdout, stderr = ssh.exec_command(command)
+        
+            # 명령의 출력 결과 읽기
+            print("STDOUT:")
+            for line in stdout.readlines():
+                print(line.strip())
+        
+            print("STDERR:")
+            for line in stderr.readlines():
+                print(line.strip())
+    
+        except paramiko.AuthenticationException:
+            print("Authentication failed, please verify your credentials")
+        except paramiko.SSHException as sshException:
+            print(f"Could not establish SSH connection: {sshException}")
+        except Exception as e:
+            print(f"Exception in connecting to the server: {e}")
+        finally:
+            # SSH 연결 종료
+            ssh.close()
+            print("SSH connection closed")

@@ -18,15 +18,8 @@ log_file_path="/app/tomcat/tomcat/logs/catalina.out"
 # 실행 파이선 파일
 urlAlivepy = "./util/urlAlive.py"
 vmAlivepy = "./util/vmAlive.py"  # 여기서 경로 수정
-Startpy = "./util/start.py"
-Shutdownpy = "./util/shutdown.py"
 fileSelect ="./util/fileSelect.py"
 
-
-def fileSearch(self):
-    result = run_script_and_get_result(fileSelect)
-    print(result)
-    self.textEdit.setText(result)
 
 def run_script_and_get_result(script_path):
     result = subprocess.run(["python", script_path], capture_output=True, text=True, encoding='utf-8')
@@ -38,15 +31,6 @@ def wasAlive():
     
 def wmAlive():
     result = run_script_and_get_result(vmAlivepy)
-
-def tomcatStart():
-    result = subprocess.run(["python", Startpy], capture_output=True, text=True, encoding='utf-8')
-    return result.stdout.strip()
-
-def tomcatShutdown():
-    result = subprocess.run(["python", Shutdownpy], capture_output=True, text=True, encoding='utf-8')
-    #wasAlive()
-    return result.stdout.strip()
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))    
@@ -71,6 +55,7 @@ class WindowClass(QMainWindow, form_class):
         
         # 라이브러리 콤보박스 세팅
         ReportCommon.libComSet(self, hostname, port, username, password)
+
         
         # 서버 status
         
@@ -89,8 +74,8 @@ class WindowClass(QMainWindow, form_class):
         '''''''''''''''''UI 초기세팅'''''''''''''''''
         
         
-        
-        #self.pushButton.clicked.connect(self.search1)
+        #jar 업로드 
+        self.pushButton_5.clicked.connect(self.fileSearch)
         
         # 톰캣 start
         self.server_start.clicked.connect(self.on_button_click)
@@ -108,9 +93,14 @@ class WindowClass(QMainWindow, form_class):
         
 
     #여기에 함수 설정
+    def fileSearch(self):
+        result = run_script_and_get_result(fileSelect)
+        print(result)
+        self.textEdit.setText(result)
+
     def on_button_click(self):
         self.tomIng('starting...')
-        tomcatStart()
+        ServerCommon.tomcatAct.tomcatAct(hostname, port, username, password,"start")
         self.log_reader_thread = ServerCommon.LogReaderThread()
         self.log_reader_thread.setup(hostname, port, username, password, log_file_path)
         self.log_reader_thread.tomStartup_signal.connect(self.tomOn)
@@ -118,14 +108,11 @@ class WindowClass(QMainWindow, form_class):
 
     def on_button_click1(self):
         self.tomIng('stopping...')
-        tomcatShutdown()
+        ServerCommon.tomcatAct.tomcatAct(hostname, port, username, password,"shutdown")
         self.log_reader_thread = ServerCommon.LogReaderThread()
         self.log_reader_thread.setup(hostname, port, username, password, log_file_path)
         self.log_reader_thread.tomShutdown_signal.connect(self.tomDown)
         self.log_reader_thread.start()
-    
-    
-    
     
     def tomOn(self):
         self.server_start.setEnabled(False)
