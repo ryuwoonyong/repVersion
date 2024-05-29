@@ -12,8 +12,11 @@ hostname = "10.0.2.21"
 port = 22
 username = "tomcat"
 password = "tomcat"
+
+#경로설정
 reportPath = "/app/tomcat/ClipReport5"
 log_file_path="/app/tomcat/tomcat/logs/catalina.out"
+verFilePath="/app/tomcat/files"
 
 #하기 함수로 vm및 was 커넥션 체크
 #AliveCheck.check_vm_connection(hostname, port, username, password)

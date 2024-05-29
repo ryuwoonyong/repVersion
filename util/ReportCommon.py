@@ -94,10 +94,11 @@ def versionChange(hostname, port, username, password, ver):
         ssh.close()
 
 def reportView(self):
-    print("여기로와야지")
-    self.tomStat.setText('되냐')
+    crfNm = self.comboBox_4.currentText()
+    jsVer = self.comboBox_2.currentText()
+    param="?crfNm="+crfNm+"&jsVer="+jsVer
     # 기본 웹 브라우저를 사용하여 URL 열기(임시)
-    webbrowser.open('http://10.0.2.21:8080/ClipReport5/report.jsp')
+    webbrowser.open('http://10.0.2.21:8080/ClipReport5/report_repv.jsp'+param)
 
     # 특정 웹 브라우저 (크롬) 사용하여 URL 열기
     #webbrowser.get('chrome').open('http://10.0.2.21/ClipReport5/report.jsp')
