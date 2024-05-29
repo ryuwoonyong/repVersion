@@ -114,14 +114,14 @@ class AliveCheck:
         try:
             response = requests.get(URL)
             response.raise_for_status()  # HTTPError가 발생하면 예외 처리
-            print("0")
+            return True
         except ConnectionError:
             #print(f"Failed to connect to {url}. Please check the server.")
-            print(f"1")
+            return False
         except HTTPError as http_err:
             #print(f"HTTP error occurred: {http_err}")
-            print(f"HTTP Error")
+            return False
         except Exception as err:
-            print(f"An error occurred: {err}")
+            return False
         finally:
             return
