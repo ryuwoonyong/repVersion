@@ -1,5 +1,4 @@
 import paramiko
-from tkinter import messagebox
 
 def check_vm_connection(hostname, port, username, password):
     """
@@ -30,9 +29,7 @@ if __name__ == "__main__":
     password = "tomcat"
     
     if check_vm_connection(hostname, port, username, password):
-        messagebox.showinfo("Vm Connection successful!")
-        print("Vm Connection successful")
+        print("0")
     else:
-        print("Vm Connection failed")
-        messagebox.showerror("Vm Connection failed")
-
+        print("1")
+    

@@ -15,22 +15,10 @@ password = "tomcat"
 reportPath = "/app/tomcat/ClipReport5"
 log_file_path="/app/tomcat/tomcat/logs/catalina.out"
 
-# 실행 파이선 파일
-urlAlivepy = "./util/urlAlive.py"
-vmAlivepy = "./util/vmAlive.py"  # 여기서 경로 수정
-fileSelect ="./util/fileSelect.py"
+#하기 함수로 vm및 was 커넥션 체크
+#AliveCheck.check_vm_connection(hostname, port, username, password)
+#AliveCheck.check_tom_connection(URL)
 
-
-def run_script_and_get_result(script_path):
-    result = subprocess.run(["python", script_path], capture_output=True, text=True, encoding='utf-8')
-    return result.stdout.strip()
-
-def wasAlive():
-    # 다른 스크립트 실행 후 반환된 결과
-    result = run_script_and_get_result(urlAlivepy)    
-    
-def wmAlive():
-    result = run_script_and_get_result(vmAlivepy)
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))    
@@ -94,7 +82,7 @@ class WindowClass(QMainWindow, form_class):
 
     #여기에 함수 설정
     def fileSearch(self):
-        result = run_script_and_get_result(fileSelect)
+        result = ReportCommon.get_file_path()
         print(result)
         self.textEdit.setText(result)
 

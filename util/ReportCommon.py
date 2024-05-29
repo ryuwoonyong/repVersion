@@ -1,5 +1,9 @@
 # SSH 클라이언트 객체 생성
 import paramiko, time, webbrowser
+import tkinter as tk
+# 파일 다이얼로그
+from tkinter import filedialog
+
 
 
 
@@ -70,3 +74,9 @@ def reportView(self):
 
     # 특정 웹 브라우저 (엣지) 사용하여 URL 열기
     #webbrowser.get('edge').open('http://10.0.2.21/ClipReport5/report.jsp')
+
+def get_file_path():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    file_path = filedialog.askopenfilename()
+    return file_path

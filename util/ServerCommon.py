@@ -86,3 +86,42 @@ class tomcatAct:
             # SSH 연결 종료
             ssh.close()
             print("SSH connection closed")
+
+class AliveCheck:
+    def check_vm_connection(hostname, port, username, password):
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    
+        try:
+            ssh.connect(hostname, port, username, password)
+            ssh.close()
+            return True
+        except paramiko.AuthenticationException:
+            print("Authentication failed, please verify your credentials")
+            return False
+        except paramiko.SSHException as sshException:
+            print(f"Could not establish SSH connection: {sshException}")
+            return False
+        except Exception as e:
+            print(f"Exception in connecting to the server: {e}")
+            return False
+        finally:
+            # SSH 연결 종료
+            ssh.close()
+            print("SSH connection closed")
+        
+    def check_tom_connection (URL):
+        try:
+            response = requests.get(URL)
+            response.raise_for_status()  # HTTPError가 발생하면 예외 처리
+            print("0")
+        except ConnectionError:
+            #print(f"Failed to connect to {url}. Please check the server.")
+            print(f"1")
+        except HTTPError as http_err:
+            #print(f"HTTP error occurred: {http_err}")
+            print(f"HTTP Error")
+        except Exception as err:
+            print(f"An error occurred: {err}")
+        finally:
+            return
