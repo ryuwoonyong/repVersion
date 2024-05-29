@@ -123,5 +123,3 @@ class AliveCheck:
             return False
         except Exception as err:
             return False
-        finally:
-            return
