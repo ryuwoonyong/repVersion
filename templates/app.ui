@@ -42,7 +42,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>220</y>
+      <y>190</y>
       <width>71</width>
       <height>31</height>
      </rect>
@@ -55,7 +55,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>170</y>
+      <y>150</y>
       <width>71</width>
       <height>31</height>
      </rect>
@@ -67,21 +67,27 @@
    <widget class="QLabel" name="libVer">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>100</y>
-      <width>191</width>
+      <x>510</x>
+      <y>110</y>
+      <width>151</width>
       <height>21</height>
      </rect>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
     <property name="text">
-     <string>현재 엔진 버전 - </string>
+     <string>현재 엔진 버전 -</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="libCombo">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>170</y>
+      <y>150</y>
       <width>91</width>
       <height>31</height>
      </rect>
@@ -138,17 +144,17 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>170</y>
+      <y>150</y>
       <width>281</width>
       <height>31</height>
      </rect>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox_2">
+   <widget class="QComboBox" name="jsCombo">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>220</y>
+      <y>190</y>
       <width>161</width>
       <height>31</height>
      </rect>
@@ -158,7 +164,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>220</y>
+      <y>190</y>
       <width>281</width>
       <height>31</height>
      </rect>
@@ -169,7 +175,7 @@
      <rect>
       <x>20</x>
       <y>60</y>
-      <width>131</width>
+      <width>151</width>
       <height>31</height>
      </rect>
     </property>
@@ -182,7 +188,7 @@
      </font>
     </property>
     <property name="text">
-     <string>SERVER STATUS</string>
+     <string>SERVER STATUS :</string>
     </property>
     <property name="textFormat">
      <enum>Qt::AutoText</enum>
@@ -191,9 +197,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>170</x>
       <y>60</y>
-      <width>31</width>
+      <width>91</width>
       <height>31</height>
      </rect>
     </property>
@@ -201,10 +207,10 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true"> background-color:rgb(0, 255, 0)</string>
+     <string notr="true"/>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; color:#ffffff;&quot;&gt;정상&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;p align=&quot;left&quot;&gt;&lt;span style=&quot; font-size:12pt; color:black;&quot;&gt;started &lt;/span&gt;&lt;span style=&quot; font-size:12pt; color:green;&quot;&gt;●&lt;/span&gt;&lt;/p&gt;</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -213,7 +219,7 @@
    <widget class="QLabel" name="vm_title_2">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>280</x>
       <y>60</y>
       <width>141</width>
       <height>31</height>
@@ -231,24 +237,11 @@
      <string>TOMCAT STATUS :</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>480</x>
-      <y>120</y>
-      <width>191</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>현재 뷰어 버전 - </string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="ViewRun">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>430</y>
+      <y>390</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -261,7 +254,7 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>430</y>
+      <y>390</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -274,9 +267,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>280</y>
-      <width>101</width>
-      <height>16</height>
+      <y>230</y>
+      <width>61</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -287,7 +280,7 @@
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>170</y>
+      <y>150</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -300,7 +293,7 @@
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>220</y>
+      <y>190</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -313,7 +306,7 @@
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>270</y>
+      <y>230</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -326,7 +319,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>270</y>
+      <y>230</y>
       <width>281</width>
       <height>31</height>
      </rect>
@@ -336,7 +329,7 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>320</y>
+      <y>280</y>
       <width>391</width>
       <height>81</height>
      </rect>
@@ -346,7 +339,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>330</y>
+      <y>280</y>
       <width>54</width>
       <height>12</height>
      </rect>
@@ -359,7 +352,7 @@
     <property name="geometry">
      <rect>
       <x>490</x>
-      <y>320</y>
+      <y>280</y>
       <width>71</width>
       <height>16</height>
      </rect>
@@ -372,7 +365,7 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>320</y>
+      <y>280</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -402,9 +395,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>470</y>
+      <y>420</y>
       <width>641</width>
-      <height>331</height>
+      <height>361</height>
      </rect>
     </property>
     <property name="html">
@@ -419,7 +412,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>170</y>
+      <y>150</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -432,7 +425,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>430</y>
+      <y>390</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -444,7 +437,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QLabel" name="tomStat">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>430</x>
       <y>60</y>
       <width>171</width>
       <height>31</height>
@@ -458,7 +451,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>170</y>
+      <y>150</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -471,7 +464,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>220</y>
+      <y>190</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -484,7 +477,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>270</y>
+      <y>230</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -493,11 +486,11 @@ p, li { white-space: pre-wrap; }
      <string>업로드</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox_4">
+   <widget class="QComboBox" name="crfCombo">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>270</y>
+      <y>230</y>
       <width>161</width>
       <height>31</height>
      </rect>

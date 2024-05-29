@@ -46,7 +46,7 @@ def libComSet(self, hostname, port, username, password):
         sel_en_verint = [int (i) for i in sel_en_ver]
         sel_en_verint.sort(reverse=True)
         for ver in sel_en_verint:
-            self.comboBox.addItem(str(ver))
+            self.libCombo.addItem(str(ver))
     finally:
         # SSH 연결 종료
         ssh.close()
@@ -62,7 +62,7 @@ def jsComSet(self, hostname, port, username, password):
         sel_en_verint = [int (i) for i in sel_en_ver]
         sel_en_verint.sort(reverse=True)
         for ver in sel_en_verint:
-            self.comboBox_2.addItem(str(ver))
+            self.jsCombo.addItem(str(ver))
     finally:
         # SSH 연결 종료
         ssh.close()
@@ -76,7 +76,7 @@ def crfComSet(self, hostname, port, username, password):
         for line in stderr.readlines():
             print(line.strip())
         for ver in sel_en_ver:
-            self.comboBox_4.addItem(str(ver))
+            self.crfCombo.addItem(str(ver))
     finally:
         # SSH 연결 종료
         ssh.close()
@@ -94,8 +94,8 @@ def versionChange(hostname, port, username, password, ver):
         ssh.close()
 
 def reportView(self):
-    crfNm = self.comboBox_4.currentText()
-    jsVer = self.comboBox_2.currentText()
+    crfNm = self.crfCombo.currentText()
+    jsVer = self.jsCombo.currentText()
     param="?crfNm="+crfNm+"&jsVer="+jsVer
     # 기본 웹 브라우저를 사용하여 URL 열기(임시)
     webbrowser.open('http://10.0.2.21:8080/ClipReport5/report_repv.jsp'+param)

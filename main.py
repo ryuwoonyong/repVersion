@@ -42,7 +42,7 @@ class WindowClass(QMainWindow, form_class):
         self.setFixedWidth(680)
         
         # 리포트 버전 확인
-        self.libVer.setText("현재버전 - 5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
+        self.libVer.setText("현재 엔진 버전 -  5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
         
         # lib 콤보박스 세팅
         ReportCommon.libComSet(self, hostname, port, username, password)
@@ -138,7 +138,7 @@ class WindowClass(QMainWindow, form_class):
         
     def verSet1(self):
         self.setEnabled(False)
-        ReportCommon.versionChange(hostname, port, username, password, self.comboBox.currentText())
+        ReportCommon.versionChange(hostname, port, username, password, self.libCombo.currentText())
         self.log_reader_thread = ServerCommon.LogReaderThread()
         self.log_reader_thread.setup(hostname, port, username, password, log_file_path)
         self.log_reader_thread.success_signal.connect(self.enable_ui)
