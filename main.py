@@ -41,10 +41,13 @@ class WindowClass(QMainWindow, form_class):
         # 리포트 버전 확인
         self.libVer.setText("현재버전 - 5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
         
-        # 라이브러리 콤보박스 세팅
+        # lib 콤보박스 세팅
         ReportCommon.libComSet(self, hostname, port, username, password)
+        # js 콤보박스 세팅
+        ReportCommon.jsComSet(self, hostname, port, username, password)
+        # crf 콤보박스 세팅
+        ReportCommon.crfComSet(self, hostname, port, username, password)
 
-        
         # 서버 status
         
         # 톰캣 status
@@ -105,6 +108,7 @@ class WindowClass(QMainWindow, form_class):
     def tomOn(self):
         self.server_start.setEnabled(False)
         self.server_shutdown.setEnabled(True)
+        self.verSet.setEnabled(True)
         self.tomStat.setText('<p align="left"><span style=" font-size:12pt; color:black;">started </span><span style=" font-size:12pt; color:green;">●</span></p>')
     def tomDown(self):
         self.server_start.setEnabled(True)

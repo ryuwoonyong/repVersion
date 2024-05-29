@@ -75,9 +75,7 @@ def crfComSet(self, hostname, port, username, password):
             sel_en_ver.append(line.replace("\n",""))
         for line in stderr.readlines():
             print(line.strip())
-        sel_en_verint = [int (i) for i in sel_en_ver]
-        sel_en_verint.sort(reverse=True)
-        for ver in sel_en_verint:
+        for ver in sel_en_ver:
             self.comboBox_4.addItem(str(ver))
     finally:
         # SSH 연결 종료
