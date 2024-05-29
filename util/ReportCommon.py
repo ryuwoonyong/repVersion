@@ -50,6 +50,38 @@ def libComSet(self, hostname, port, username, password):
     finally:
         # SSH 연결 종료
         ssh.close()
+def jsComSet(self, hostname, port, username, password):
+    try:
+        sel_en_ver=[]
+        ssh.connect(hostname, port, username, password)
+        stdin, stdout, stderr = ssh.exec_command("ls -r /app/tomcat/files/js/")
+        for line in stdout.readlines():
+            sel_en_ver.append(line.replace("\n",""))
+        for line in stderr.readlines():
+            print(line.strip())
+        sel_en_verint = [int (i) for i in sel_en_ver]
+        sel_en_verint.sort(reverse=True)
+        for ver in sel_en_verint:
+            self.comboBox_2.addItem(str(ver))
+    finally:
+        # SSH 연결 종료
+        ssh.close()
+def crfComSet(self, hostname, port, username, password):
+    try:
+        sel_en_ver=[]
+        ssh.connect(hostname, port, username, password)
+        stdin, stdout, stderr = ssh.exec_command("ls -r /app/tomcat/ClipReport5/WEB-INF/clipreport5/crf/")
+        for line in stdout.readlines():
+            sel_en_ver.append(line.replace("\n",""))
+        for line in stderr.readlines():
+            print(line.strip())
+        sel_en_verint = [int (i) for i in sel_en_ver]
+        sel_en_verint.sort(reverse=True)
+        for ver in sel_en_verint:
+            self.comboBox_4.addItem(str(ver))
+    finally:
+        # SSH 연결 종료
+        ssh.close()
 
 def versionChange(hostname, port, username, password, ver):
     try:
