@@ -40,26 +40,28 @@ class WindowClass(QMainWindow, form_class):
         
         '''''''''''''''''UI 초기세팅'''''''''''''''''
         
-        self.setWindowTitle("톰캣/리포트 확인")
+        self.setWindowTitle("Report Version TEST")
         self.setFixedWidth(680)
+        
+        # VM 서버 확인
+        
+        # 톰캣 확인
+        if(ServerCommon.AliveCheck.check_tom_connection("http://10.0.2.21:8080/ClipReport5/tomCheck.jsp")):
+            self.tomOn()
+        else:
+            self.tomDown()
         
         # 리포트 버전 확인
         self.libVer.setText("현재 엔진 버전 -  5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
         
         # lib 콤보박스 세팅
         ReportCommon.libComSet(self, hostname, port, username, password)
+        
         # js 콤보박스 세팅
         ReportCommon.jsComSet(self, hostname, port, username, password)
+        
         # crf 콤보박스 세팅
-        ReportCommon.crfComSet(self, hostname, port, username, password)
-
-        # 서버 status
-        
-        # 톰캣 status
-        #self.tomOn()
-        #self.tomDown()
-        #분기필요
-        
+        ReportCommon.crfComSet(self, hostname, port, username, password)  
         
         
         # 톰캣 로그
