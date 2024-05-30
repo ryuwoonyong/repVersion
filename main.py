@@ -17,7 +17,7 @@ password = "tomcat"
 reportPath = "/app/tomcat/ClipReport5"
 log_file_path="/app/tomcat/tomcat/logs/catalina.out"
 verFilePath="/app/tomcat/files"
-remote_file_path="/app/tomcat/files/lib/"
+
 
 #하기 함수로 vm및 was 커넥션 체크
 #AliveCheck.check_vm_connection(hostname, port, username, password)
@@ -85,19 +85,23 @@ class WindowClass(QMainWindow, form_class):
         
         # 뷰어 실행
         self.ViewRun.clicked.connect(self.view)
-        
-        
-        
 
-    #여기에 함수 설정
+    #여기에 함수 설정 
+    #여러개의 파일의 경로를 가져 오기 위한 파일 서치
     def fileSearch(self):
-        result = ReportCommon.get_file_path()
-        self.textEdit.setText(result)
+        result = ReportCommon.get_file_paths()
+        for file_path in result:
+            file_paths_str = "\n".join(result)  # 파일 경로들을 줄 바꿈 문자로 연결하여 하나의 문자열로 변환
+            self.textEdit.setText(file_paths_str)
 
     def upload_file_to_server(self):
-        local_file_path = self.textEdit.toPlainText()
-        ver = ReportCommon.extract_last_four_to_seven_chars(local_file_path)
-        ReportCommon.upload_file_to_server(hostname, port, username, password, local_file_path, remote_file_path, ver)
+        local_file_paths = self.textEdit.toPlainText()
+        local_file_paths_list = local_file_paths.split('\n')
+        ver = ReportCommon.extract_number_before_jar(local_file_paths_list)
+        remote_dir="/app/tomcat/files/lib/"
+        print("ver====" + ver)
+        remote_dir = remote_dir + str(ver) +"/"
+        ReportCommon.upload_files_to_server(hostname, port, username, password, local_file_paths_list, remote_dir, ver)
 
     def on_button_click(self):
         ServerCommon.tomcatAct.tomcatAct(hostname, port, username, password,"start")

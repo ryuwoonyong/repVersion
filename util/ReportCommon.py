@@ -110,13 +110,13 @@ def reportView(self):
     # 특정 웹 브라우저 (엣지) 사용하여 URL 열기
     #webbrowser.get('edge').open('http://10.0.2.21/ClipReport5/report.jsp')
 
-def get_file_path():
+def get_file_paths():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
-    file_path = filedialog.askopenfilename()
-    return file_path
+    file_paths = filedialog.askopenfilenames()
+    return list(file_paths)
 
-def upload_file_to_server(hostname, port, username, password, local_file_path, remote_file_path, ver):
+def upload_files_to_server(hostname, port, username, password, local_file_paths, remote_dir, ver=None):
     # SSH 클라이언트 초기화
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -127,18 +127,6 @@ def upload_file_to_server(hostname, port, username, password, local_file_path, r
         
         # SFTP 클라이언트 초기화
         sftp = ssh.open_sftp()
-
-        if remote_file_path is None:
-            temporary_directory = '/tmp/'  # 임시 디렉토리 경로
-            remote_file_path = os.path.join(temporary_directory, os.path.basename(local_file_path))
-        elif ver is not None:
-            # remote_file_path에 ver 추가
-            remote_file_path = remote_file_path + ver + "/ClipReport5.0." + ver + ".jar"
-        else:
-            raise ValueError("If 'remote_file_path' is provided, 'ver' must also be provided.")
-        
-        # 원격 디렉토리 경로 생성
-        remote_dir = os.path.dirname(remote_file_path)
         
         # 원격 디렉토리가 존재하지 않으면 생성
         try:
@@ -146,9 +134,20 @@ def upload_file_to_server(hostname, port, username, password, local_file_path, r
         except FileNotFoundError:
             make_remote_dir(sftp, remote_dir)
         
-        # 파일 업로드
-        sftp.put(local_file_path, remote_file_path)
-        print(f"File {local_file_path} uploaded to {remote_file_path} on {hostname}")
+        # 각 파일에 대해 업로드
+        for local_file_path in local_file_paths:
+            if remote_dir is None:
+                temporary_directory = '/tmp/'  # 임시 디렉토리 경로
+                remote_file_path = os.path.join(temporary_directory, os.path.basename(local_file_path))
+            elif ver is not None:
+                # remote_file_path에 ver 추가
+                remote_file_path = os.path.join(remote_dir, os.path.basename(local_file_path))
+            else:
+                raise ValueError("If 'remote_dir' is provided, 'ver' must also be provided.")
+            
+            # 파일 업로드
+            sftp.put(local_file_path, remote_file_path)
+            print(f"File {local_file_path} uploaded to {remote_file_path} on {hostname}")
         
         # SFTP 클라이언트 종료
         sftp.close()
@@ -165,20 +164,34 @@ def upload_file_to_server(hostname, port, username, password, local_file_path, r
         print("SSH connection closed")
 
 def make_remote_dir(sftp, remote_directory):
-    """재귀적으로 디렉토리를 생성하는 함수"""
-    dirs = remote_directory.split('/')
-    path = ''
-    for directory in dirs:
-        if directory:
-            path = f"{path}/{directory}"
-            try:
-                sftp.stat(path)
-            except FileNotFoundError:
-                sftp.mkdir(path)
+    if remote_directory == '/':
+        sftp.chdir('/')
+        return
+    if remote_directory == '':
+        return
+    try:
+        sftp.chdir(remote_directory)  # Test if remote directory exists
+    except IOError:
+        dirname, basename = os.path.split(remote_directory.rstrip('/'))
+        make_remote_dir(sftp, dirname)  # Create parent directories
+        sftp.mkdir(basename)  # Create remote directory
+        sftp.chdir(basename)
+        return True
 
-def extract_last_four_to_seven_chars(file_path):
-    # 파일명 추출
-    file_name = os.path.basename(file_path)
-    # 파일명에서 마지막 4~7자리 추출
-    last_four_to_seven_chars = file_name[-7:-4]
-    return last_four_to_seven_chars
+def extract_number_before_jar(file_paths_str):
+    for file_path in file_paths_str:
+        # 파일명만 추출
+        filename = os.path.basename(file_path)
+    
+        # 'ClipReport5.0.'가 파일명에 있는지 확인
+        if 'ClipReport5.0.' in filename:
+            # '.'으로 분할하여 마지막에서 두 번째 요소 추출
+            parts = filename.split('.')
+            if len(parts) > 1:
+                version_number = parts[-2]
+                print(f"Found version number: {version_number} in {filename}")
+                return version_number
+            else:
+                print(f"No valid version number found in {filename}")
+        else:
+            print(f"'ClipReport5.0.' not found in {filename}")
