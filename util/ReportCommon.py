@@ -8,7 +8,6 @@ from tkinter import filedialog
 
 
 
-
 ssh = paramiko.SSHClient()
 
 # 자동으로 서버의 호스트 키를 추가
@@ -36,7 +35,8 @@ def versionCheck(hostname, port, username, password, reportPath):
     #return rep_en_ver.split("=")[1]
     return rep_en_ver
 
-def libComSet(self, hostname, port, username, password):
+def libComSet(self, hostname, port, username, password, new_ver=None):
+    self.libCombo.clear()
     try:
         sel_en_ver=[]
         ssh.connect(hostname, port, username, password)
@@ -52,6 +52,9 @@ def libComSet(self, hostname, port, username, password):
     finally:
         # SSH 연결 종료
         ssh.close()
+    if new_ver:
+        self.libCombo.setCurrentText(new_ver)
+
 def jsComSet(self, hostname, port, username, password):
     try:
         sel_en_ver=[]
@@ -178,20 +181,30 @@ def make_remote_dir(sftp, remote_directory):
         sftp.chdir(basename)
         return True
 
-def extract_number_before_jar(file_paths_str):
+def extract_number_before_jar(file_paths_str, self):
+    uploadFileList=[]
+    uploadFilePathList=[]
+    version=""
     for file_path in file_paths_str:
         # 파일명만 추출
         filename = os.path.basename(file_path)
-    
-        # 'ClipReport5.0.'가 파일명에 있는지 확인
-        if 'ClipReport5.0.' in filename:
-            # '.'으로 분할하여 마지막에서 두 번째 요소 추출
-            parts = filename.split('.')
-            if len(parts) > 1:
-                version_number = parts[-2]
-                print(f"Found version number: {version_number} in {filename}")
-                return version_number
+        file_size = os.path.getsize(file_path)  # 파일 크기 (바이트 단위)
+        if os.path.isfile(file_path) and file_path.endswith('.jar'):
+            uploadFileList.append(filename)
+            uploadFilePathList.append(file_path)
+            if file_size <= 20 * 1024 * 1024:
+                # 'ClipReport5.0.'가 파일명에 있는지 확인
+                if 'ClipReport5.0.' in filename:
+                    # '.'으로 분할하여 마지막에서 두 번째 요소 추출
+                    parts = filename.split('.')
+                    if len(parts) > 1:
+                        version_number = parts[-2]
+                        print(f"Found version number: {version_number} in {filename}")
+                        version=str(version_number)
             else:
-                print(f"No valid version number found in {filename}")
+                print("용량이 너무큼")
+                uploadFileList.append(filename + "- 용량제한 제외")
         else:
-            print(f"'ClipReport5.0.' not found in {filename}")
+            uploadFileList.append(filename + "- jar 파일이 아님")
+    message = "5.0."+version+" version\r\n"+',\r\n'.join(uploadFileList)
+    return version, message, uploadFilePathList

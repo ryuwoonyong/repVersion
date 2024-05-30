@@ -17,7 +17,7 @@ password = "tomcat"
 reportPath = "/app/tomcat/ClipReport5"
 log_file_path="/app/tomcat/tomcat/logs/catalina.out"
 verFilePath="/app/tomcat/files"
-
+remote_lib_dir="/app/tomcat/files/lib/"
 
 #하기 함수로 vm및 was 커넥션 체크
 #AliveCheck.check_vm_connection(hostname, port, username, password)
@@ -95,13 +95,20 @@ class WindowClass(QMainWindow, form_class):
             self.textEdit.setText(file_paths_str)
 
     def upload_file_to_server(self):
-        local_file_paths = self.textEdit.toPlainText()
-        local_file_paths_list = local_file_paths.split('\n')
-        ver = ReportCommon.extract_number_before_jar(local_file_paths_list)
-        remote_dir="/app/tomcat/files/lib/"
-        print("ver====" + ver)
-        remote_dir = remote_dir + str(ver) +"/"
-        ReportCommon.upload_files_to_server(hostname, port, username, password, local_file_paths_list, remote_dir, ver)
+        if self.textEdit.toPlainText() != "":
+            local_file_paths = self.textEdit.toPlainText()
+            local_file_paths_list = local_file_paths.split('\n')
+            if len(local_file_paths_list) > 1:
+                #버전 추출 및 파일 체크
+                ver, message, uploadFilePathList = ReportCommon.extract_number_before_jar(local_file_paths_list, self)
+                QMessageBox.about(self,'QMessageBox',message)
+                remote_dir = remote_lib_dir + ver +"/"
+                ReportCommon.upload_files_to_server(hostname, port, username, password, uploadFilePathList, remote_dir, ver)
+                ReportCommon.libComSet(self, hostname, port, username, password, ver)
+            else:
+                QMessageBox.about(self,'QMessageBox','두개이상 선택')
+        else:
+            QMessageBox.about(self,'QMessageBox','현재버전과 같음')
 
     def on_button_click(self):
         ServerCommon.tomcatAct.tomcatAct(hostname, port, username, password,"start")
@@ -142,7 +149,8 @@ class WindowClass(QMainWindow, form_class):
             self.log_reader_thread.success_signal.connect(self.enable_ui)
             self.log_reader_thread.start()
         else:
-             QMessageBox.about(self,'현재버전과 같음')
+            QMessageBox.about(self,'QMessageBox','현재버전과 같음')
+            
         
     def enable_ui(self):
         self.setEnabled(True)
