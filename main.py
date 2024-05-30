@@ -85,6 +85,9 @@ class WindowClass(QMainWindow, form_class):
         
         # 뷰어 실행
         self.ViewRun.clicked.connect(self.view)
+        
+        # 데이터타입
+        self.dataType.currentTextChanged.connect(self.dataType_select)
 
     #여기에 함수 설정 
     #여러개의 파일의 경로를 가져 오기 위한 파일 서치
@@ -103,7 +106,7 @@ class WindowClass(QMainWindow, form_class):
                 ver, message, uploadFilePathList = ReportCommon.extract_number_before_jar(local_file_paths_list, self)
                 QMessageBox.about(self,'QMessageBox',message)
                 remote_dir = remote_lib_dir + ver +"/"
-                ReportCommon.upload_files_to_server(hostname, port, username, password, uploadFilePathList, remote_dir, ver)
+                QMessageBox.about(self,'QMessageBox',ReportCommon.upload_files_to_server(hostname, port, username, password, uploadFilePathList, remote_dir, ver))
                 ReportCommon.libComSet(self, hostname, port, username, password, ver)
             else:
                 QMessageBox.about(self,'QMessageBox','두개이상 선택')
@@ -150,6 +153,11 @@ class WindowClass(QMainWindow, form_class):
             self.log_reader_thread.start()
         else:
             QMessageBox.about(self,'QMessageBox','현재버전과 같음')
+    
+    def dataType_select(self):
+        if self.dataType.currentText() == 'CSV':
+            QMessageBox.about(self,'QMessageBox','CSV아직안댐')
+            
             
         
     def enable_ui(self):

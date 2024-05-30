@@ -123,48 +123,48 @@ def upload_files_to_server(hostname, port, username, password, local_file_paths,
     # SSH 클라이언트 초기화
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    
     try:
         # SSH 연결 시도
         ssh.connect(hostname, port=port, username=username, password=password)
-        
+            
         # SFTP 클라이언트 초기화
         sftp = ssh.open_sftp()
-        
+        sftp.stat(remote_dir)
+        return "이미 존재함"
+    except:
         # 원격 디렉토리가 존재하지 않으면 생성
+        make_remote_dir(sftp, remote_dir)
         try:
-            sftp.stat(remote_dir)
-        except FileNotFoundError:
-            make_remote_dir(sftp, remote_dir)
-        
-        # 각 파일에 대해 업로드
-        for local_file_path in local_file_paths:
-            if remote_dir is None:
-                temporary_directory = '/tmp/'  # 임시 디렉토리 경로
-                remote_file_path = os.path.join(temporary_directory, os.path.basename(local_file_path))
-            elif ver is not None:
-                # remote_file_path에 ver 추가
-                remote_file_path = os.path.join(remote_dir, os.path.basename(local_file_path))
-            else:
-                raise ValueError("If 'remote_dir' is provided, 'ver' must also be provided.")
             
-            # 파일 업로드
-            sftp.put(local_file_path, remote_file_path)
-            print(f"File {local_file_path} uploaded to {remote_file_path} on {hostname}")
+            # 각 파일에 대해 업로드
+            for local_file_path in local_file_paths:
+                if remote_dir is None:
+                    temporary_directory = '/tmp/'  # 임시 디렉토리 경로
+                    remote_file_path = os.path.join(temporary_directory, os.path.basename(local_file_path))
+                elif ver is not None:
+                    # remote_file_path에 ver 추가
+                    remote_file_path = os.path.join(remote_dir, os.path.basename(local_file_path))
+                else:
+                    raise ValueError("If 'remote_dir' is provided, 'ver' must also be provided.")
+                
+                # 파일 업로드
+                sftp.put(local_file_path, remote_file_path)
+                print(f"File {local_file_path} uploaded to {remote_file_path} on {hostname}")
+            
+            # SFTP 클라이언트 종료
+            sftp.close()
+            return "upload success !!"
         
-        # SFTP 클라이언트 종료
-        sftp.close()
-    
-    except paramiko.AuthenticationException:
-        print("Authentication failed, please verify your credentials")
-    except paramiko.SSHException as sshException:
-        print(f"Could not establish SSH connection: {sshException}")
-    except Exception as e:
-        print(f"Exception in connecting to the server or uploading file: {e}")
-    finally:
-        # SSH 연결 종료
-        ssh.close()
-        print("SSH connection closed")
+        except paramiko.AuthenticationException:
+            return "Authentication failed, please verify your credentials"
+        except paramiko.SSHException as sshException:
+            return f"Could not establish SSH connection: {sshException}"
+        except Exception as e:
+            return f"Exception in connecting to the server or uploading file: {e}"
+        finally:
+            # SSH 연결 종료
+            ssh.close()
+            print("SSH connection closed")
 
 def make_remote_dir(sftp, remote_directory):
     if remote_directory == '/':
@@ -203,8 +203,8 @@ def extract_number_before_jar(file_paths_str, self):
                         version=str(version_number)
             else:
                 print("용량이 너무큼")
-                uploadFileList.append(filename + "- 용량제한 제외")
+                uploadFileList.append(filename + "<< 용량제한 제외")
         else:
-            uploadFileList.append(filename + "- jar 파일이 아님")
-    message = "5.0."+version+" version\r\n"+',\r\n'.join(uploadFileList)
+            uploadFileList.append(filename + "<< jar 파일이 아님")
+    message = "5.0."+version+" version\r\n"+'\r\n'.join(uploadFileList)
     return version, message, uploadFilePathList
