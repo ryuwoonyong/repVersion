@@ -67,8 +67,8 @@
    <widget class="QLabel" name="libVer">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>110</y>
+      <x>20</x>
+      <y>370</y>
       <width>151</width>
       <height>21</height>
      </rect>
@@ -77,10 +77,10 @@
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="text">
-     <string>현재 엔진 버전 -</string>
+     <string>엔진 버전 -</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QComboBox" name="libCombo">
@@ -140,7 +140,7 @@
      <string>STOP</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTextEdit" name="libUploadPath">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -160,7 +160,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit_2">
+   <widget class="QTextEdit" name="jsUploadPath">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -241,7 +241,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>390</y>
+      <y>420</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -250,11 +250,11 @@
      <string>뷰어실행</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="PDFRun">
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>390</y>
+      <y>420</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -315,7 +315,7 @@
      <string>찾기</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit_3">
+   <widget class="QTextEdit" name="crfUploadPath">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -380,22 +380,12 @@
       <string>XML</string>
      </property>
     </item>
-    <item>
-     <property name="text">
-      <string>CSV</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>SQL</string>
-     </property>
-    </item>
    </widget>
    <widget class="QTextEdit" name="textEditLogger">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>420</y>
+      <y>450</y>
       <width>641</width>
       <height>361</height>
      </rect>
@@ -421,11 +411,11 @@ p, li { white-space: pre-wrap; }
      <string>버전 적용</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_8">
+   <widget class="QPushButton" name="log_btn">
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>390</y>
+      <y>420</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -494,6 +484,25 @@ p, li { white-space: pre-wrap; }
       <width>161</width>
       <height>31</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="jsVer">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>390</y>
+      <width>151</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="text">
+     <string>뷰어 버전 -</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
   </widget>
