@@ -106,7 +106,7 @@ class WindowClass(QMainWindow, form_class):
         self.jsCombo.currentTextChanged.connect(self.viewerVerSet)
         
         # 로그 새창 보기
-        self.log_btn.currentTextChanged.connect(self.logNewWin)
+        self.log_btn.clicked.connect(self.logNewWin)
     #여기에 함수 설정 
     
     # ui 로드된 후 이벤트
