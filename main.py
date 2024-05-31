@@ -1,4 +1,5 @@
 import os, sys, paramiko, subprocess, logging, time
+from os import environ
 
 from util import ReportCommon
 from util import ServerCommon
@@ -32,7 +33,13 @@ def resource_path(relative_path):
 form = resource_path('./templates/app.ui')
 form_class = uic.loadUiType(form)[0]
 
-
+# 높은 해상도에서도 안깨지게
+def suppress_qt_warnings():
+    environ["QT_DEVICE_PIXEL_RATIO"]="0"
+    environ["QT_AUTO_SCREEN_SCALE_FACTOR"]="1"
+    environ["QT_SCREEN_SCALE_FACTORS"]="1"
+    environ["QT_SCALE_FACTOR"]="1"
+    
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
@@ -248,7 +255,9 @@ class WindowClass(QMainWindow, form_class):
         QMessageBox.about(self,'QMessageBox','이것도 귀찮;')
         
 
+    
 if __name__ == '__main__':
+    suppress_qt_warnings()
     app = QApplication(sys.argv)
     myWindow = WindowClass( )
     myWindow.show( )
