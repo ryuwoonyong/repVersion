@@ -1,8 +1,7 @@
 # SSH 클라이언트 객체 생성
-import paramiko, time, webbrowser
+import paramiko, time, webbrowser, re, os
 import tkinter as tk
-import re
-import os
+import urllib.parse
 # 파일 다이얼로그
 from tkinter import filedialog
 
@@ -110,7 +109,9 @@ def reportView(self):
     jsVer = self.jsCombo.currentText()
     dataVal = self.dataVal.toPlainText()
     dataType = self.dataType.currentText()
-    param="?crfNm="+crfNm+"&jsVer="+jsVer+"&dataVal="+dataVal+"&dataType="+dataType
+    
+    encoded_dataVal=urllib.parse.quote(dataVal)
+    param="?crfNm="+crfNm+"&jsVer="+jsVer+"&dataVal="+encoded_dataVal+"&dataType="+dataType
     # 기본 웹 브라우저를 사용하여 URL 열기(임시)
     webbrowser.open('http://10.0.2.21:8080/ClipReport5/report_repv.jsp'+param)
 

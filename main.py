@@ -39,9 +39,10 @@ class WindowClass(QMainWindow, form_class):
         self.setupUi(self)
         
         '''''''''''''''''UI 초기세팅'''''''''''''''''
-        
+        #self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setWindowTitle("Report Version TEST")
-        self.setFixedWidth(691)
+        #self.setFixedWidth(680)
         
         # VM 서버 확인
         
@@ -52,8 +53,8 @@ class WindowClass(QMainWindow, form_class):
             self.tomDown()
         
         # 리포트 버전 확인
-        self.libVer.setText("엔진 버전 -  5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
-        #self.jsVer.setText("뷰어 버전 -  5.0."+self.jsCombo.currentText())
+        self.libVer.setText("엔진 버전 - 5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
+        #self.jsVer.setText("뷰어 버전 - 5.0."+self.jsCombo.currentText())
         
         # lib 콤보박스 세팅
         ReportCommon.libComSet(self, hostname, port, username, password)
