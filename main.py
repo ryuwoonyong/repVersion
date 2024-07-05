@@ -9,7 +9,7 @@ from PyQt5 import uic
 from PyQt5.QtCore import QThread, pyqtSignal, QTimer
 
 # SSH 연결 설정
-hostname = "10.0.2.21"
+hostname = "10.0.2.178"
 port = 22
 username = "tomcat"
 password = "tomcat"
@@ -54,7 +54,7 @@ class WindowClass(QMainWindow, form_class):
         # VM 서버 확인
         
         # 톰캣 확인
-        if(ServerCommon.AliveCheck.check_tom_connection("http://10.0.2.21:8080/ClipReport5/tomCheck.jsp")):
+        if(ServerCommon.AliveCheck.check_tom_connection("http://"+hostname+":8080/ClipReport5/tomCheck.jsp")):
             self.tomOn()
         else:
             self.tomDown()

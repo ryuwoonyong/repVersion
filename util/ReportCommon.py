@@ -113,13 +113,13 @@ def reportView(self):
     encoded_dataVal=urllib.parse.quote(dataVal)
     param="?crfNm="+crfNm+"&jsVer="+jsVer+"&dataVal="+encoded_dataVal+"&dataType="+dataType
     # 기본 웹 브라우저를 사용하여 URL 열기(임시)
-    webbrowser.open('http://10.0.2.21:8080/ClipReport5/report_repv.jsp'+param)
+    webbrowser.open('http://10.0.2.178:8080/ClipReport5/report_repv.jsp'+param)
 
     # 특정 웹 브라우저 (크롬) 사용하여 URL 열기
-    #webbrowser.get('chrome').open('http://10.0.2.21/ClipReport5/report.jsp')
+    #webbrowser.get('chrome').open('http://10.0.2.178/ClipReport5/report.jsp')
 
     # 특정 웹 브라우저 (엣지) 사용하여 URL 열기
-    #webbrowser.get('edge').open('http://10.0.2.21/ClipReport5/report.jsp')
+    #webbrowser.get('edge').open('http://10.0.2.178/ClipReport5/report.jsp')
 
 def get_file_paths(type):
     if type == 'jar':
