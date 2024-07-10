@@ -9,7 +9,7 @@ from PyQt5 import uic
 from PyQt5.QtCore import QThread, pyqtSignal, QTimer
 
 # SSH 연결 설정
-hostname = "10.0.2.178"
+hostname = "10.0.2.24"
 port = 22
 username = "tomcat"
 password = "tomcat"
@@ -21,6 +21,8 @@ verFilePath="/app/tomcat/files"
 remote_lib_dir="/app/tomcat/files/lib/"
 remote_js_dir="/app/tomcat/files/js/"
 remote_crf_dir="/app/tomcat/ClipReport5/WEB-INF/clipreport5/crf/"
+engine_path = "/app/tomcat/files/mount/onedrive/General/제품릴리즈/(클립리포트)(클립이폼)5.0/서버엔진"
+engine_sh_path="/app/tomcat/files/mount/getEng.sh"
 #하기 함수로 vm및 was 커넥션 체크
 #AliveCheck.check_vm_connection(hostname, port, username, password)
 #AliveCheck.check_tom_connection(URL)
@@ -63,6 +65,9 @@ class WindowClass(QMainWindow, form_class):
         self.libVer.setText("엔진 버전 - 5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
         #self.jsVer.setText("뷰어 버전 - 5.0."+self.jsCombo.currentText())
         
+        # 리포트 버전 갱신
+        ReportCommon.updateEngine(hostname, port, username, password, remote_lib_dir, engine_path, engine_sh_path)
+
         # lib 콤보박스 세팅
         ReportCommon.libComSet(self, hostname, port, username, password)
         
@@ -262,4 +267,5 @@ if __name__ == '__main__':
     myWindow = WindowClass( )
     myWindow.show( )
     app.exec_( )
+
 
