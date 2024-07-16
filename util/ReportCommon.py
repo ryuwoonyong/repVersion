@@ -316,7 +316,7 @@ def upload_files_to_server_crf(hostname, port, username, password, local_file_pa
         ssh.close()
         print("SSH connection closed")
 
-def getRemoteDirectories(hostname, port, username, password, lib_path, engine_path):
+def getRemoteDirectories(hostname, port, username, password, path):
 
     # SSH 클라이언트 초기화
     ssh = paramiko.SSHClient()
@@ -324,49 +324,55 @@ def getRemoteDirectories(hostname, port, username, password, lib_path, engine_pa
     ssh.connect(hostname, port, username, password)
     sftp = ssh.open_sftp()
 
-    eng_array = []
-    lib_array = []
+    resultArray = []
 
-    # OneDrive/서버엔진 디렉토리 목록 불러오기
-    try: 
-        eng_list = sftp.listdir(engine_path)
-        eng_array = [item[4:] for item in eng_list]
-
-    except FileNotFoundError:
-        print(f"onedrive 서버엔진 경로를 찾을 수 없습니다: {engine_path}")
-    except Exception as e:
-        print(f"onedrive 서버엔진 디렉토리 목록 불러오기 중 오류 발생: {str(e)}")
-
-    # /files/lib 디렉토리 목록 불러오기
+    # 디렉토리 목록 불러오기
     try:
-        lib_list = sftp.listdir(lib_path)
-        lib_array = [item for item in lib_list]
+        list = sftp.listdir(path)
+        resultArray = [item for item in list]
 
     except FileNotFoundError:
-        print(f"lib 경로를 찾을 수 없습니다: {lib_path}")
+        print(f"경로를 찾을 수 없습니다: {path}")
     except Exception as e:
-        print(f"lib 디렉토리 목록 불러오기 중 오류 발생: {str(e)}")
+        print(f"디렉토리 목록 불러오기 중 오류 발생: {str(e)}")
 
     # SSH 연결 종료
     sftp.close()
     ssh.close()
 
-    return eng_array, lib_array
-    
+    return resultArray
+
+def getRemoteFiles(hostname, port, username, password, path):
+    fileArray = []
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(hostname, port, username, password)
+    sftp = ssh.open_sftp()
+
+    files = sftp.listdir(path)
+    for file in files:
+            fileArray.append(file)
+
+    sftp.close()
+    ssh.close()
+
+    return fileArray
+
     
 def updateEngine(hostname, port, username, password,lib_path, engine_path, engine_sh_path):
-    eng_list, lib_list = getRemoteDirectories(hostname, port, username, password,lib_path, engine_path)
+    eng_list = getRemoteDirectories(hostname, port, username, password, engine_path)
+    lib_list = getRemoteDirectories(hostname, port, username, password, lib_path)
     
+    # eng_list에서 각 항목의 "5.0." 글자 제거
+    eng_list = [item[4:] for item in eng_list]
+
     # SSH 클라이언트 초기화
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(hostname, port, username, password)
 
     # 목록 비교하여 없는 lib/js 버전만 업로드 
-    # 지금처럼 서버가 공용일땐 상관없는데 나중에 모듈화해서 개인서버로 돌릴 때 버전 1부터 서버에 올려야되는 상황생기면 오래걸림. 속도개선할 수 있나??
-    # 속도개선이 불가할 경우 아래 두 가지 아이디어가 있음
-    # 1. 모듈화 할때 js/lib 를 상당부분 업로드를 해 모듈화를 한다 (최신버전만 해당 로직을 통해 업로드 해 시간 최소화)
-    # 2. 콤보박스에서는 리스트만 불러오고, 실제로 해당 버전을 선택했을 때 불러오도록 로직을 변경한다.
     for item in eng_list:
         if item not in lib_list:
             stdin, stdout, stderr = ssh.exec_command(engine_sh_path+" "+item)
@@ -375,4 +381,51 @@ def updateEngine(hostname, port, username, password,lib_path, engine_path, engin
 
     # SSH 연결 종료
     ssh.close()
+
+def exportPDF(self):
+    crfNm = self.crfCombo.currentText()
+    jsVer = self.jsCombo.currentText()
+    dataVal = self.dataVal.toPlainText()
+    dataType = self.dataType.currentText()
     
+    encoded_dataVal=urllib.parse.quote(dataVal)
+    
+    param="?crfNm="+crfNm+"&jsVer="+jsVer+"&dataVal="+encoded_dataVal+"&dataType="+dataType
+    # 기본 웹 브라우저를 사용하여 URL 열기(임시)
+    webbrowser.open('http://10.0.2.24:8080/ClipReport5/exportForPDF.jsp'+param)
+
+    # 특정 웹 브라우저 (크롬) 사용하여 URL 열기
+    #webbrowser.get('chrome').open('http://10.0.2.178/ClipReport5/report.jsp')
+
+    # 특정 웹 브라우저 (엣지) 사용하여 URL 열기
+    #webbrowser.get('edge').open('http://10.0.2.178/ClipReport5/report.jsp')
+
+def compareView(version):
+    param="?version="+version
+    webbrowser.open('http://10.0.2.24:8080/ClipReport5/compare_repv.jsp'+param)
+
+def upload_files(hostname, port, username, password, remote_lib_dir, remote_js_dir, version):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(hostname, port, username, password)
+
+    stdin, stdout, stderr = ssh.exec_command(f"cp -R {remote_lib_dir}{version}/* /app/tomcat/ClipReport5_{version}/WEB-INF/lib/")
+
+    ssh.close()
+
+def exec_cmd(hostname, port, username, password, command):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    try:
+        ssh.connect(hostname, port, username, password)
+        stdin, stdout, stderr = ssh.exec_command(command)
+
+        # 명령어 실행 결과 출력
+        print(stdout.read().decode())
+        print(stderr.read().decode())
+        
+    except Exception as e:
+        print(f"Exception in connecting to the server: {e}")
+    finally:
+        ssh.close()

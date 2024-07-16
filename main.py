@@ -20,9 +20,11 @@ log_file_path="/app/tomcat/tomcat/logs/catalina.out"
 verFilePath="/app/tomcat/files"
 remote_lib_dir="/app/tomcat/files/lib/"
 remote_js_dir="/app/tomcat/files/js/"
-remote_crf_dir="/app/tomcat/ClipReport5/WEB-INF/clipreport5/crf/"
+remote_crf_dir="{reportPath}/WEB-INF/clipreport5/crf/"
 engine_path = "/app/tomcat/files/mount/onedrive/General/제품릴리즈/(클립리포트)(클립이폼)5.0/서버엔진"
 engine_sh_path="/app/tomcat/files/mount/getEng.sh"
+conetext_path = "/app/tomcat/tomcat/conf/Catalina/localhost"
+
 #하기 함수로 vm및 was 커넥션 체크
 #AliveCheck.check_vm_connection(hostname, port, username, password)
 #AliveCheck.check_tom_connection(URL)
@@ -41,7 +43,62 @@ def suppress_qt_warnings():
     environ["QT_AUTO_SCREEN_SCALE_FACTOR"]="1"
     environ["QT_SCREEN_SCALE_FACTORS"]="1"
     environ["QT_SCALE_FACTOR"]="1"
+
+class compareDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        form = resource_path('./templates/multi.ui')
+        uic.loadUi(form, self)
+        
+        '''''''''''''''''UI 초기세팅'''''''''''''''''
+
+        # 다이얼로그 내 버튼 클릭
+        self.addContextBtn.clicked.connect(self.addContextpath)
+
+        '''''''''''''''''UI 초기세팅'''''''''''''''''
+
+    # 여기에 함수 설정 
     
+    def addContextpath(self):
+        #QMessageBox.information(self, '대기', '대기')
+        wait_msg_box = QMessageBox(self)
+        wait_msg_box.setWindowTitle('대기')
+        wait_msg_box.setText('대기대기대기')
+        wait_msg_box.show()
+        
+        versionInfo = self.versionEdit.toPlainText()  
+        remote_lib_list = ReportCommon.getRemoteDirectories(hostname, port, username, password, remote_lib_dir)
+        
+        # resultVersion 초기화
+        resultVersion = []
+        
+        values = versionInfo.split(',')
+        for value in values:
+            version = value.strip()
+            if version in remote_lib_list:
+                try:
+                    resultVersion.append(version)
+
+                    # Context 추가 
+                    ServerCommon.create_context(hostname, port, username, password, version)
+                
+                    # Directory 생성 
+                    ReportCommon.exec_cmd(hostname, port, username, password, f"rsync -av --exclude 'js' --exclude 'WEB-INF/lib/*' {reportPath}/* {reportPath}_{version}")
+                    ReportCommon.exec_cmd(hostname, port, username, password, f"cp {remote_lib_dir}/{version}/* {reportPath}_{version}/WEB-INF/lib")
+
+                except Exception as e:
+                    print(f'Error processing version {version}: {str(e)}') 
+            else:
+                print(f'Version {version} not found in remote library directory, skipping context creation.')
+        
+        # 완료 메시지 표시 후 다이얼로그 닫기
+        wait_msg_box.close()
+        QMessageBox.information(self, '작업 완료', '작업이 완료되었습니다.')
+        self.accept()
+
+        #view
+        ReportCommon.compareView(','.join(resultVersion))
+            
 class WindowClass(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
@@ -79,8 +136,7 @@ class WindowClass(QMainWindow, form_class):
         
         # 톰캣 로그
         self.textEditLogger.setReadOnly(True)
-        self.setup_log_reader(hostname, port, username, password, log_file_path)
-        
+        self.setup_log_reader(hostname, port, username, password, log_file_path)        
 
         '''''''''''''''''UI 초기세팅'''''''''''''''''
         
@@ -120,6 +176,11 @@ class WindowClass(QMainWindow, form_class):
         
         # 로그 새창 보기
         self.log_btn.clicked.connect(self.logNewWin)
+
+        # 버튼 클릭 시 다이얼로그 띄우기
+        self.multi.clicked.connect(self.openCompareDialog) 
+        self.multiViewRun.clicked.connect(self.openCompareView) 
+
     #여기에 함수 설정 
     
     # ui 로드된 후 이벤트
@@ -203,6 +264,8 @@ class WindowClass(QMainWindow, form_class):
         self.log_reader_thread.tomShutdown_signal.connect(self.tomDown)
         self.log_reader_thread.start()
     
+
+
     def tomOn(self):
         self.server_start.setEnabled(False)
         self.server_shutdown.setEnabled(True)
@@ -219,7 +282,8 @@ class WindowClass(QMainWindow, form_class):
     def view(self):
         ReportCommon.reportView(self)
     def exportPDF(self):
-        QMessageBox.about(self,'QMessageBox','아 귀찮;;')       
+        ReportCommon.exportPDF(self)
+        # QMessageBox.about(self,'QMessageBox','아 귀찮;;')       
     def verComSet(self):
         if ReportCommon.versionCheck(hostname, port, username, password, reportPath) != self.libCombo.currentText():
             self.setEnabled(False)
@@ -236,9 +300,7 @@ class WindowClass(QMainWindow, form_class):
             QMessageBox.about(self,'QMessageBox','CSV아직안댐')
     def viewerVerSet(self):
         self.jsVer.setText("뷰어 버전 - 5.0."+self.jsCombo.currentText())
-            
-            
-        
+                   
     def enable_ui(self):
         self.setEnabled(True)
         self.libVer.setText("엔진 버전 - 5.0."+ReportCommon.versionCheck(hostname, port, username, password, reportPath))
@@ -258,7 +320,26 @@ class WindowClass(QMainWindow, form_class):
             self.log_reader_thread.stop()
     def logNewWin(self):
         QMessageBox.about(self,'QMessageBox','이것도 귀찮;')
-        
+
+    def openCompareDialog(self):
+        self.compareDialog = compareDialog(self)
+        self.compareDialog.exec_()
+
+    def openCompareView(self):
+        file_names = ReportCommon.getRemoteFiles(hostname, port, username, password, conetext_path)
+
+        # 문자열 제거할 패턴들
+        patterns_to_remove = ["ClipReport5", '_', ".xml"]
+        # 파일 이름에서 패턴 제거
+        cleaned_file_names = []
+        for file_name in file_names:
+            cleaned_name = file_name
+            for pattern in patterns_to_remove:
+                cleaned_name = cleaned_name.replace(pattern, '')
+            cleaned_file_names.append(cleaned_name)
+
+        ReportCommon.compareView(','.join(cleaned_file_names))
+       
 
     
 if __name__ == '__main__':
@@ -269,3 +350,18 @@ if __name__ == '__main__':
     app.exec_( )
 
 
+
+
+
+# dialog 버튼 클릭 
+#def add_button_click(self):
+ #   QMessageBox.information(self, 'Info', 'Add button clicked!')
+    
+  #  # version 에 versionEdit Value 값 추가
+   # version = self.versionEdit.text()
+    
+    # context Path 추가 
+    #ServerCommon.create_context(hostname, port, username, password, version)
+
+    # js, lib 업로드 
+    #ReportCommon.upload_files(hostname, port, username, password, remote_lib_dir, remote_js_dir, version)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
-    <height>842</height>
+    <width>678</width>
+    <height>835</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -259,7 +259,7 @@
    <widget class="QPushButton" name="PDFRun">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>110</x>
       <y>420</y>
       <width>75</width>
       <height>23</height>
@@ -515,6 +515,44 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="alignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="multi">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>400</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Context 추가</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="multiViewRun">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>420</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>멀티 뷰어실행</string>
     </property>
    </widget>
   </widget>

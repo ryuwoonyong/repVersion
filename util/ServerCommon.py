@@ -1,7 +1,9 @@
 import paramiko
 import requests
+import xml.etree.ElementTree as ET
 from PyQt5.QtCore import QThread, pyqtSignal
 from requests.exceptions import ConnectionError, HTTPError
+import os
 
 class LogReaderThread(QThread):
     new_log_signal = pyqtSignal(str)
@@ -123,3 +125,49 @@ class AliveCheck:
             return False
         except Exception as err:
             return False
+        
+def create_context(hostname, port, username, password, version):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    
+    try:
+        # SSH 연결 시도
+        ssh.connect(hostname, port, username, password)
+        
+        # 루트 요소 생성
+        context = ET.Element('Context')
+        context.set('path', '/ClipReport5_' + version)
+        context.set('docBase', '/app/tomcat/ClipReport5_' + version)
+        context.set('reloadable', 'true')
+
+        # 트리 구조 생성
+        tree = ET.ElementTree(context)
+
+        # 저장할 경로 설정
+        save_path = '/app/tomcat/tomcat/conf/Catalina/localhost'
+        file_name = 'ClipReport5_' + version + '.xml'
+        full_path = save_path + "/" + file_name
+
+        # XML 파일을 로컬에 저장
+        local_temp_file = f'/temp/{file_name}'
+        with open(local_temp_file, 'wb') as file:
+            file.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
+            tree.write(file, encoding='utf-8', xml_declaration=False)
+        
+        # 원격 서버에 디렉토리 생성 명령 실행
+        ssh.exec_command(f'mkdir -p {save_path}')
+        
+        # SFTP 세션을 시작하고 파일을 원격 서버로 전송
+        sftp = ssh.open_sftp()
+        sftp.put(local_temp_file, full_path)
+        sftp.close()
+        
+        # 로컬 임시 파일 삭제
+        os.remove(local_temp_file)
+
+        print(f"{full_path} 파일이 생성되었습니다.")
+
+    except Exception as e:
+        print(f"Exception in connecting to the server: {e}")
+    finally:
+        ssh.close()
