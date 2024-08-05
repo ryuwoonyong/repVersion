@@ -62,7 +62,7 @@ def jsComSet(self, hostname, port, username, password, new_ver=None):
     try:
         sel_en_ver=[]
         ssh.connect(hostname, port, username, password)
-        stdin, stdout, stderr = ssh.exec_command("ls -r /app/tomcat/files/js/")
+        stdin, stdout, stderr = ssh.exec_command("ls -r /app/tomcat/files/web/js/")
         for line in stdout.readlines():
             sel_en_ver.append(line.replace("\n",""))
         for line in stderr.readlines():
